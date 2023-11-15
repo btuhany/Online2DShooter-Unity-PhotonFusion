@@ -28,6 +28,8 @@ public class NetworkRunnerController : MonoBehaviour, INetworkRunnerCallbacks
             _instance = Instantiate(_networkRunnerPrefab);
         }
         _instance.AddCallbacks(this);
+        _instance.ProvideInput = true;
+
         OnNetworkRunnerStarted?.Invoke();
 
         StartGameArgs startGameArgs = new StartGameArgs()

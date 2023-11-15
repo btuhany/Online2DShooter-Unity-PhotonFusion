@@ -23,7 +23,7 @@ public class PlayerSpawnerController : NetworkBehaviour, IPlayerJoined, IPlayerL
         if (Runner.IsServer)
         {
             Debug.Log(_spawnPoint.position);
-            var playerObj = Runner.Spawn(_playerNetworkPrefab, _spawnPoint.position, _spawnPoint.rotation);
+            var playerObj = Runner.Spawn(_playerNetworkPrefab, _spawnPoint.position, _spawnPoint.rotation, playerRef);
             _spawnPoint.position += Vector3.right * 2f;
             Runner.SetPlayerObject(playerRef, playerObj);
         }
