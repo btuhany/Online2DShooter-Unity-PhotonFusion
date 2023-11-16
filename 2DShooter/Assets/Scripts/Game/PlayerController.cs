@@ -15,7 +15,7 @@ public class PlayerController : NetworkBehaviour, IBeforeUpdate
     {
         if(Runner.TryGetInputForPlayer(Object.InputAuthority, out PlayerData input))
         {
-            _rb.velocity = new Vector2(_horizontalInput, _verticalInput).normalized * _moveSpeed;
+            _rb.velocity = new Vector2(input.HorizontalInput, input.VerticalInput).normalized * _moveSpeed;
         }
     }
     public void BeforeUpdate()

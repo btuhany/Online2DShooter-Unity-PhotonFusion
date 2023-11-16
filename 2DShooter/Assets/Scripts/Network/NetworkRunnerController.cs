@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 public class NetworkRunnerController : MonoBehaviour, INetworkRunnerCallbacks
 {
     [SerializeField] private NetworkRunner _networkRunnerPrefab;
-    private NetworkRunner _instance;
+    private NetworkRunner _runnerInstance;
     public static NetworkRunnerController Instance { get; private set; }
 
     public event System.Action OnNetworkRunnerStarted;
@@ -16,19 +16,22 @@ public class NetworkRunnerController : MonoBehaviour, INetworkRunnerCallbacks
     private void Awake()
     {
         if (Instance == null)
+        {
+            DontDestroyOnLoad(gameObject);
             Instance = this;
+        }
         else
             Destroy(this);
 
     }
     public async void StartGame(GameMode mode, string roomName, int maxPlayer)
     {
-        if (_instance == null)
+        if (_runnerInstance == null)
         {
-            _instance = Instantiate(_networkRunnerPrefab);
+            _runnerInstance = Instantiate(_networkRunnerPrefab);
         }
-        _instance.AddCallbacks(this);
-        _instance.ProvideInput = true;
+        _runnerInstance.AddCallbacks(this);
+        _runnerInstance.ProvideInput = true;
 
         OnNetworkRunnerStarted?.Invoke();
 
@@ -37,14 +40,14 @@ public class NetworkRunnerController : MonoBehaviour, INetworkRunnerCallbacks
             GameMode = mode,
             SessionName = roomName,
             PlayerCount = maxPlayer,
-            SceneManager = _instance.GetComponent<INetworkSceneManager>()
+            SceneManager = _runnerInstance.GetComponent<INetworkSceneManager>()
         };
 
-        var result = await _instance.StartGame(startGameArgs);
+        var result = await _runnerInstance.StartGame(startGameArgs);
         
         if(result.Ok)
         {
-            _instance.SetActiveScene("MainGame");
+            _runnerInstance.SetActiveScene("MainGame");
         }
         else
         {
@@ -54,7 +57,7 @@ public class NetworkRunnerController : MonoBehaviour, INetworkRunnerCallbacks
 
     public void ShutDownRunner()
     {
-        _instance.Shutdown();
+        _runnerInstance.Shutdown();
     }
     public void OnConnectedToServer(NetworkRunner runner)
     {
